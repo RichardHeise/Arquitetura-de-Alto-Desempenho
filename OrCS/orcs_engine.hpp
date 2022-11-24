@@ -16,6 +16,9 @@ class orcs_engine_t {
         uint64_t misses = 0;
         uint64_t taken = 0;
         uint64_t not_taken = 0;
+        uint64_t predicted = 0;
+        uint64_t not_predicted = 0;
+        int miss_predicted = 0;
 
         /// Components modeled
         trace_reader_t *trace_reader;
