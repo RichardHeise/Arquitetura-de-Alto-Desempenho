@@ -12,6 +12,11 @@ class orcs_engine_t {
 
         bool simulator_alive;
 
+        uint64_t hits = 0;
+        uint64_t misses = 0;
+        uint64_t taken = 0;
+        uint64_t not_taken = 0;
+
         /// Components modeled
         trace_reader_t *trace_reader;
         processor_t *processor;

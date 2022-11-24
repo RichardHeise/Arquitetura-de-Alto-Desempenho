@@ -14,20 +14,46 @@ void processor_t::allocate() {
 void processor_t::clock() {
 
 	/// Get the next instruction from the trace
-	opcode_package_t new_instruction;
+	static opcode_package_t new_instruction;
+	opcode_package_t old_instruction;
+
+	old_instruction = new_instruction;
+
 	if (!orcs_engine.trace_reader->trace_fetch(&new_instruction)) {
 		/// If EOF
 		orcs_engine.simulator_alive = false;
 	}
 
-	// if (orcs_engine.simulator_alive)
-	// 	print_trace(new_instruction);
-
 	if (new_instruction.opcode_operation == INSTRUCTION_OPERATION_BRANCH) {
 
+		int tag = new_instruction.opcode_address & 1023;
 
-		if (new_instruction.branch_type == BRANCH_COND) {
+		for ( int i = 0; i < 4; i++ ) {
 
+			if ( this->BTB[tag][i].opcode_address == new_instruction.opcode_address ) {
+				orcs_engine.hits += 1;
+			} else {
+				orcs_engine.misses += 1;
+			}
+
+			this->BTB[tag][i].access_cycle = orcs_engine.global_cycle;
+			if (new_instruction.branch_type == BRANCH_COND) {
+				if ( old_instruction.opcode_address + old_instruction.opcode_size == new_instruction.opcode_address ) {
+					if (this->BTB[tag][i].bits_predictor > 0) {
+						this->BTB[tag][i].bits_predictor -= 1;
+					} 
+
+					orcs_engine.not_taken += 1;
+				} else {
+					if (this->BTB[tag][i].bits_predictor < 3) {
+						this->BTB[tag][i].bits_predictor += 1;
+					}
+
+					orcs_engine.taken += 1;
+				}
+
+			}
+			this->BTB[tag][i].target_address = new_instruction.opcode_address;
 		}
 	}
 
