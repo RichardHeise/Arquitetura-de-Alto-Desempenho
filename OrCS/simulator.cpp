@@ -80,11 +80,6 @@ int main(int argc, char **argv) {
         orcs_engine.global_cycle++;
     }
 
-    printf("hits: %lu\n", orcs_engine.hits);
-    printf("misses: %lu\n", orcs_engine.misses);
-    printf("taken: %lu\n", orcs_engine.taken);
-    printf("not_taken: %lu\n", orcs_engine.not_taken);
-
 	ORCS_PRINTF("End of Simulation\n")
 	orcs_engine.trace_reader->statistics();
     orcs_engine.processor->statistics();

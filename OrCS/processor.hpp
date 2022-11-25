@@ -19,4 +19,6 @@ class processor_t {
 	    void clock();
 	    void statistics();
 		void print_trace(opcode_package_t new_instruction);
+		void condHandler(opcode_package_t instruction, opcode_package_t new_instruction, int tag, int i);
+		void predictionHandler(opcode_package_t instruction, opcode_package_t next_instruction);
 };
