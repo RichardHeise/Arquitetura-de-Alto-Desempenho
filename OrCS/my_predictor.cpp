@@ -1,33 +1,15 @@
 
 #include "simulator.hpp"
 
-void my_predictor_t::init_predictor() {
-
-    gbhr = 0;
-
-    // Local BHT
-    local_bht = (uint32_t*) calloc(sizeof(uint32_t), 1023);
-
-    // Local PHT
-    local_pht = (uint32_t*) calloc(sizeof(uint32_t), 1023);
-
-    // Global PHT
-    global_pht = (uint32_t*) calloc(sizeof(uint32_t), 1023);
-
-    // Choice PHT
-    choice_pht = (uint32_t*) calloc(sizeof(uint32_t), 1023);
-  
-}
-
 void my_predictor_t::see_the_future(uint64_t pc) {
 
-    uint32_t prediction;
-    uint32_t pcbits;
-    uint32_t histbits;
-    uint32_t index;
-    uint32_t choice;
-    uint32_t pcidx;
-    uint32_t lhist;
+    uint64_t prediction;
+    uint64_t pcbits;
+    uint64_t histbits;
+    uint64_t index;
+    uint64_t choice;
+    uint64_t pcidx;
+    uint64_t lhist;
 
     pcbits = pc & 1023;
     histbits = gbhr & 1023;
@@ -46,21 +28,18 @@ void my_predictor_t::see_the_future(uint64_t pc) {
         orcs_engine.taken += 1;
     else
         orcs_engine.not_taken += 1;
-
-
-    orcs_engine.not_taken += 1;
 }
 
 
 void my_predictor_t::update_predictor(uint64_t pc, uint8_t outcome) {
   
-    uint32_t pcbits;
-    uint32_t histbits;
-    uint32_t index;
-    uint32_t pcidx;
-    uint32_t lhist;
-    uint32_t lpred;
-    uint32_t gpred;
+    uint64_t pcbits;
+    uint64_t histbits;
+    uint64_t index;
+    uint64_t pcidx;
+    uint64_t lhist;
+    uint64_t lpred;
+    uint64_t gpred;
 
     pcbits = pc & 1023;
     histbits = gbhr & 1023;
@@ -99,5 +78,4 @@ void my_predictor_t::update_predictor(uint64_t pc, uint8_t outcome) {
 
     local_bht[pcidx] = local_bht[pcidx]<<1 | outcome;
     gbhr = gbhr<<1 | outcome;
-    return;
 }

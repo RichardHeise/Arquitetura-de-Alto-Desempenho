@@ -186,10 +186,6 @@ void processor_t::two_bits(opcode_package_t instruction, opcode_package_t next_i
 
 void processor_t::other_predictor(opcode_package_t instruction, opcode_package_t next_instruction) {
 
-	my_predictor_t predictor;
-
-	predictor.init_predictor();
-
 	uint8_t outcome = (instruction.opcode_address + instruction.opcode_size == next_instruction.opcode_address);
 	
 	predictor.see_the_future(instruction.opcode_address);
