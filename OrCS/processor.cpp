@@ -31,7 +31,7 @@ void processor_t::clock() {
 	}
 
 	if (instruction.opcode_operation == INSTRUCTION_OPERATION_BRANCH) {
-		predictionHandler(instruction, next_instruction, true);
+		BTBhandler(instruction, next_instruction, false);
 	}
 };
 
@@ -94,7 +94,7 @@ void processor_t::print_trace(opcode_package_t new_instruction){
 };
 
 // =====================================================================
-void processor_t::condHandler(opcode_package_t instruction, opcode_package_t next_instruction, int tag, int i) {
+void processor_t::two_bits(opcode_package_t instruction, opcode_package_t next_instruction, int tag, int i) {
 	if ( instruction.opcode_address + instruction.opcode_size == next_instruction.opcode_address ) {
 		orcs_engine.not_taken += 1;
 
@@ -127,22 +127,7 @@ void processor_t::condHandler(opcode_package_t instruction, opcode_package_t nex
 	}
 };
 
-// =====================================================================
-void processor_t::predictionHandler(opcode_package_t instruction, opcode_package_t next_instruction, bool TAGE) {
-
-	if ( !TAGE ) {
-
-		two_bits(instruction, next_instruction);
-
-	} else {
-
-		other_predictor(instruction, next_instruction);
-
-	}
-
-};
-
-void processor_t::two_bits(opcode_package_t instruction, opcode_package_t next_instruction) {
+void processor_t::BTBhandler(opcode_package_t instruction, opcode_package_t next_instruction, bool default_pred) {
 
 	int tag = instruction.opcode_address & 1023;
 
@@ -154,7 +139,10 @@ void processor_t::two_bits(opcode_package_t instruction, opcode_package_t next_i
 			BTB[tag][i].target_address = next_instruction.opcode_address;
 			BTB[tag][i].access_cycle = orcs_engine.global_cycle;
 			if (instruction.branch_type == BRANCH_COND) {
-				condHandler(instruction, next_instruction, tag, i);
+				if (default_pred)
+					two_bits(instruction, next_instruction, tag, i);
+				else 
+					other_predictor(instruction, next_instruction);
 			}
 
 			return;
@@ -188,7 +176,7 @@ void processor_t::other_predictor(opcode_package_t instruction, opcode_package_t
 
 	uint8_t outcome = (instruction.opcode_address + instruction.opcode_size == next_instruction.opcode_address);
 	
-	predictor.see_the_future(instruction.opcode_address);
+	predictor.see_the_future(instruction.opcode_address, outcome);
 	predictor.update_predictor(instruction.opcode_address, outcome);
 	
 }

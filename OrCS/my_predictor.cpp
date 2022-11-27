@@ -1,7 +1,15 @@
 
 #include "simulator.hpp"
 
-void my_predictor_t::see_the_future(uint64_t pc) {
+my_predictor_t::my_predictor_t() {
+    this->gbhr = 0;
+    this->local_bht = (uint64_t*) calloc(sizeof(uint64_t), 1023);
+    this->local_pht = (uint64_t*) calloc(sizeof(uint64_t), 1023);
+    this->global_pht =  (uint64_t*) calloc(sizeof(uint64_t), 1023);
+    this->choice_pht =  (uint64_t*) calloc(sizeof(uint64_t), 1023);
+};
+
+void my_predictor_t::see_the_future(uint64_t pc, uint8_t outcome) {
 
     uint64_t prediction;
     uint64_t pcbits;
@@ -24,12 +32,24 @@ void my_predictor_t::see_the_future(uint64_t pc) {
         prediction = global_pht[index];
     }
 
-    if(prediction>1)
-        orcs_engine.taken += 1;
-    else
-        orcs_engine.not_taken += 1;
-}
-
+    if(prediction>1) {
+        if (outcome == 0)  {
+            orcs_engine.taken += 1;
+            orcs_engine.predicted += 1;
+        } else {
+            orcs_engine.not_taken += 1;
+            orcs_engine.not_predicted += 1;
+        }
+    } else {
+        if (outcome == 1) {
+            orcs_engine.not_taken += 1;
+            orcs_engine.predicted += 1;
+        } else {
+            orcs_engine.not_predicted += 1;
+            orcs_engine.taken += 1;
+        } 
+    }
+};
 
 void my_predictor_t::update_predictor(uint64_t pc, uint8_t outcome) {
   
@@ -49,22 +69,22 @@ void my_predictor_t::update_predictor(uint64_t pc, uint8_t outcome) {
 
     lpred = local_pht[lhist];
     if(lpred>1)
-        lpred = orcs_engine.taken;
+        lpred = 0;
     else
-        lpred = orcs_engine.not_taken;
+        lpred = 1;
 
     gpred = global_pht[index];
     if(gpred>1)
-        gpred = orcs_engine.taken;
+        gpred = 0;
     else
-        gpred = orcs_engine.not_taken;
+        gpred = 1;
 
     if(gpred==outcome && lpred!=outcome && choice_pht[index]!=3)
         choice_pht[index]++;
     else if(gpred!=outcome && lpred==outcome && choice_pht[index]!=0)
         choice_pht[index]--;
 
-    if(outcome==orcs_engine.taken) {
+    if(outcome==0) {
         if(global_pht[index]!=3)
             global_pht[index]++;
         if(local_pht[lhist]!=3)
@@ -78,4 +98,4 @@ void my_predictor_t::update_predictor(uint64_t pc, uint8_t outcome) {
 
     local_bht[pcidx] = local_bht[pcidx]<<1 | outcome;
     gbhr = gbhr<<1 | outcome;
-}
+};

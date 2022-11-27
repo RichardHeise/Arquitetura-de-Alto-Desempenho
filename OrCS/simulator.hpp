@@ -31,7 +31,6 @@ class my_predictor_t;
 /// Global SINUCA_ENGINE instantiation
 // ============================================================================
 extern orcs_engine_t orcs_engine;
-extern my_predictor_t predictor;
 
 
 // ============================================================================

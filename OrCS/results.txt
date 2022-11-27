@@ -1,0 +1,90 @@
+Resultados: ASTAR
+End of dynamic simulation trace
+End of Simulation
+######################################################
+trace_reader_t
+fetch_instructions:200001517
+hits: 37208459
+misses: 512
+taken: 12427073
+not_taken: 18404363
+predicted: 29636119
+not_predicted: 1195317
+miss_predicted percentage: 96.123058%
+######################################################
+processor_t
+Resultados CALCULIX
+End of dynamic simulation trace
+End of Simulation
+######################################################
+trace_reader_t
+fetch_instructions:200001551
+hits: 3926596
+misses: 253
+taken: 2490802
+not_taken: 1071161
+predicted: 3509071
+not_predicted: 52892
+miss_predicted percentage: 98.515088%
+######################################################
+processor_t
+Resultados DEALII
+End of dynamic simulation trace
+End of Simulation
+######################################################
+trace_reader_t
+fetch_instructions:200001503
+hits: 31818312
+misses: 5822
+taken: 9441922
+not_taken: 12277743
+predicted: 21384415
+not_predicted: 335250
+miss_predicted percentage: 98.456468%
+######################################################
+processor_t
+Resultados GROMACS
+End of dynamic simulation trace
+End of Simulation
+######################################################
+trace_reader_t
+fetch_instructions:200001492
+hits: 5077244
+misses: 1148
+taken: 2176816
+not_taken: 2552941
+predicted: 4507105
+not_predicted: 222652
+miss_predicted percentage: 95.292528%
+######################################################
+processor_t
+Resultados LIBQUANTUM
+End of dynamic simulation trace
+End of Simulation
+######################################################
+trace_reader_t
+fetch_instructions:200001503
+hits: 34952067
+misses: 58
+taken: 32596860
+not_taken: 2355137
+predicted: 34663862
+not_predicted: 288135
+miss_predicted percentage: 99.175627%
+######################################################
+processor_t
+Resultados NAMD
+End of dynamic simulation trace
+End of Simulation
+######################################################
+trace_reader_t
+fetch_instructions:200001502
+hits: 36627388
+misses: 1077
+taken: 12304925
+not_taken: 16778505
+predicted: 28473060
+not_predicted: 610370
+miss_predicted percentage: 97.901314%
+######################################################
+processor_t
