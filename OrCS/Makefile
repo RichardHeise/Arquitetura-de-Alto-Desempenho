@@ -6,7 +6,7 @@ CPPFLAGS = $(FLAGS)
 BIN_NAME = orcs
 RM = rm -f
 
-FLAGS =   -O3 -ggdb -Wall -Wextra -Werror -g
+FLAGS =   -O3 -ggdb -Wall -Wextra -Werror
 LDFLAGS = -ggdb
 
 ########################################################################
@@ -17,7 +17,8 @@ SRC_PACKAGE = 		opcode_package.cpp
 
 SRC_TRACE_READER = 	trace_reader.cpp
 
-SRC_PROCESSOR =	 	processor.cpp btb.cpp
+SRC_PROCESSOR =	 	btb.cpp processor.cpp my_predictor.cpp
+
 
 SRC_CORE =  simulator.cpp orcs_engine.cpp\
 			$(SRC_TRACE_READER)	\

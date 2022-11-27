@@ -1,0 +1,12 @@
+echo "Resultados: ASTAR"
+./orcs -t ../astar.CINT.PP200M
+echo "Resultados CALCULIX"
+./orcs -t ../calculix.CFP.PP200M
+echo "Resultados DEALII"
+./orcs -t ../dealII.CFP.PP200M
+echo "Resultados GROMACS"
+./orcs -t ../gromacs.CFP.PP200M
+echo "Resultados LIBQUANTUM"
+./orcs -t ../libquantum.CINT.PP200M
+echo "Resultados NAMD"
+./orcs -t ../namd.CFP.PP200M

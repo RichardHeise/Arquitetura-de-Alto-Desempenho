@@ -30,7 +30,9 @@ void processor_t::clock() {
 		orcs_engine.simulator_alive = false;
 	}
 
-	predictionHandler(instruction, next_instruction);
+	if (instruction.opcode_operation == INSTRUCTION_OPERATION_BRANCH) {
+		predictionHandler(instruction, next_instruction, true);
+	}
 };
 
 // =====================================================================
@@ -40,8 +42,10 @@ void processor_t::statistics() {
     printf("taken: %lu\n", orcs_engine.taken);
     printf("not_taken: %lu\n", orcs_engine.not_taken);
 	printf("predicted: %lu\n", orcs_engine.predicted);
-	printf("miss_predicted: %lu\n", orcs_engine.miss_predicted);
-	printf("miss_predicted percentage: %lu\n",  orcs_engine.predicted*100 / (orcs_engine.miss_predicted + orcs_engine.predicted));
+	printf("not_predicted: %lu\n", orcs_engine.not_predicted);
+	double total = (orcs_engine.not_predicted + orcs_engine.predicted);
+	double result = orcs_engine.predicted / total;
+	printf("miss_predicted percentage: %f%c\n",  result*100, '%');
 	ORCS_PRINTF("######################################################\n");
 	ORCS_PRINTF("processor_t\n");
 
@@ -92,6 +96,8 @@ void processor_t::print_trace(opcode_package_t new_instruction){
 // =====================================================================
 void processor_t::condHandler(opcode_package_t instruction, opcode_package_t next_instruction, int tag, int i) {
 	if ( instruction.opcode_address + instruction.opcode_size == next_instruction.opcode_address ) {
+		orcs_engine.not_taken += 1;
+
 		if ( BTB[tag][i].bits_predictor < 2 ) {
 			orcs_engine.predicted += 1;
 		} else {
@@ -103,9 +109,10 @@ void processor_t::condHandler(opcode_package_t instruction, opcode_package_t nex
 			BTB[tag][i].bits_predictor -= 1;
 		}
 
-		orcs_engine.not_taken += 1;
 
 	} else {
+		orcs_engine.taken += 1;
+
 		if ( BTB[tag][i].bits_predictor > 1 ) {
 			orcs_engine.predicted += 1;
 		} else {
@@ -117,51 +124,75 @@ void processor_t::condHandler(opcode_package_t instruction, opcode_package_t nex
 			BTB[tag][i].bits_predictor += 1;
 		}
 
-		orcs_engine.taken += 1;
 	}
 };
 
 // =====================================================================
-void processor_t::predictionHandler(opcode_package_t instruction, opcode_package_t next_instruction) {
+void processor_t::predictionHandler(opcode_package_t instruction, opcode_package_t next_instruction, bool TAGE) {
 
-	if (instruction.opcode_operation == INSTRUCTION_OPERATION_BRANCH) {
+	if ( !TAGE ) {
 
-		int tag = instruction.opcode_address & 1023;
+		two_bits(instruction, next_instruction);
 
-		for ( int i = 0; i < 4; i++ ) {
+	} else {
 
-			if ( BTB[tag][i].opcode_address == instruction.opcode_address ) {
-				orcs_engine.hits += 1;
+		other_predictor(instruction, next_instruction);
 
-				BTB[tag][i].target_address = next_instruction.opcode_address;
-				BTB[tag][i].access_cycle = orcs_engine.global_cycle;
-				if (instruction.branch_type == BRANCH_COND) {
-					condHandler(instruction, next_instruction, tag, i);
-				}
-
-				return;
-			}
-		}
-
-		int lesser = 0;
-		orcs_engine.misses += 1;
-		for (int i = 0; i < 4; i++) {
-			if (BTB[tag][i].opcode_address == 0) {
-				BTB[tag][i].opcode_address = instruction.opcode_address;
-				BTB[tag][i].access_cycle = orcs_engine.global_cycle;
-				BTB[tag][i].target_address = next_instruction.opcode_address;
-				BTB[tag][i].bits_predictor = 0;
-				return;
-			} else if (BTB[tag][i].access_cycle < BTB[tag][lesser].access_cycle) {
-				lesser = i;
-			}
-		}
-
-		BTB[tag][lesser].opcode_address = instruction.opcode_address;
-		BTB[tag][lesser].access_cycle = orcs_engine.global_cycle;
-		BTB[tag][lesser].target_address = next_instruction.opcode_address;
-		BTB[tag][lesser].bits_predictor = 0;
-		
 	}
 
 };
+
+void processor_t::two_bits(opcode_package_t instruction, opcode_package_t next_instruction) {
+
+	int tag = instruction.opcode_address & 1023;
+
+	for ( int i = 0; i < 4; i++ ) {
+
+		if ( BTB[tag][i].opcode_address == instruction.opcode_address ) {
+			orcs_engine.hits += 1;
+
+			BTB[tag][i].target_address = next_instruction.opcode_address;
+			BTB[tag][i].access_cycle = orcs_engine.global_cycle;
+			if (instruction.branch_type == BRANCH_COND) {
+				condHandler(instruction, next_instruction, tag, i);
+			}
+
+			return;
+		}
+	}
+
+	int lesser = 0;
+	orcs_engine.misses += 1;
+	for (int i = 0; i < 4; i++) {
+		if (BTB[tag][i].opcode_address == 0) {
+			BTB[tag][i].opcode_address = instruction.opcode_address;
+			BTB[tag][i].access_cycle = orcs_engine.global_cycle;
+			BTB[tag][i].target_address = next_instruction.opcode_address;
+			BTB[tag][i].bits_predictor = 0;
+			return;
+		} 
+		
+		if (BTB[tag][i].access_cycle < BTB[tag][lesser].access_cycle) {
+			lesser = i;
+		}
+	}
+
+	BTB[tag][lesser].opcode_address = instruction.opcode_address;
+	BTB[tag][lesser].access_cycle = orcs_engine.global_cycle;
+	BTB[tag][lesser].target_address = next_instruction.opcode_address;
+	BTB[tag][lesser].bits_predictor = 0;
+	
+};
+
+void processor_t::other_predictor(opcode_package_t instruction, opcode_package_t next_instruction) {
+
+	my_predictor_t predictor;
+
+	predictor.init_predictor();
+
+	uint8_t outcome = (instruction.opcode_address + instruction.opcode_size == next_instruction.opcode_address);
+	
+	predictor.see_the_future(instruction.opcode_address);
+	predictor.update_predictor(instruction.opcode_address, outcome);
+	
+}
