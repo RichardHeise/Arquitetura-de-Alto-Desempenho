@@ -2,34 +2,34 @@
 #include "simulator.hpp"
 
 my_predictor_t::my_predictor_t() {
-    this->gbhr = 0;
+    this->global_bhr = 0;
     this->local_bht = (uint64_t*) calloc(sizeof(uint64_t), 1023);
     this->local_pht = (uint64_t*) calloc(sizeof(uint64_t), 1023);
     this->global_pht =  (uint64_t*) calloc(sizeof(uint64_t), 1023);
     this->choice_pht =  (uint64_t*) calloc(sizeof(uint64_t), 1023);
 };
 
-void my_predictor_t::see_the_future(uint64_t pc, uint8_t outcome) {
+void my_predictor_t::see_the_future(uint64_t PC, uint8_t outcome) {
 
     uint64_t prediction;
     uint64_t pcbits;
-    uint64_t histbits;
-    uint64_t index;
+    uint64_t hybridbits;
+    uint64_t XOR;
     uint64_t choice;
-    uint64_t pcidx;
-    uint64_t lhist;
+    uint64_t local_hist;
 
-    pcbits = pc & 1023;
-    histbits = gbhr & 1023;
-    index = histbits ^ pcbits;
-    choice = choice_pht[index];
+    pcbits = PC & 1023;
+    hybridbits = global_bhr & 511;
+    (hybridbits<<9);
+    hybridbits = hybridbits | (512 & local_bht[pcbits]);
+    XOR = hybridbits ^ pcbits;
+    choice = choice_pht[XOR];
 
     if(choice<2) {
-        pcidx = 1023 & pc;
-        lhist = 1023 & local_bht[pcidx];
-        prediction = local_pht[lhist];
+        local_hist = 1023 & local_bht[pcbits];
+        prediction = local_pht[local_hist];
     } else {
-        prediction = global_pht[index];
+        prediction = global_pht[XOR];
     }
 
     if(prediction>1) {
@@ -51,51 +51,53 @@ void my_predictor_t::see_the_future(uint64_t pc, uint8_t outcome) {
     }
 };
 
-void my_predictor_t::update_predictor(uint64_t pc, uint8_t outcome) {
+void my_predictor_t::update_predictor(uint64_t PC, uint8_t outcome) {
   
     uint64_t pcbits;
-    uint64_t histbits;
-    uint64_t index;
-    uint64_t pcidx;
-    uint64_t lhist;
-    uint64_t lpred;
-    uint64_t gpred;
+    uint64_t hybridbits;
+    uint64_t XOR;
+    uint64_t local_hist;
+    uint64_t local_predction;
+    uint64_t global_prediction;
 
-    pcbits = pc & 1023;
-    histbits = gbhr & 1023;
-    index = histbits ^ pcbits;
-    pcidx = 1023 & pc;
-    lhist = 1023 & local_bht[pcidx];
+    pcbits = PC & 1023;
+    hybridbits = global_bhr & 511;
+    
+    (hybridbits<<9);
+    hybridbits = hybridbits | (512 & local_bht[pcbits]);
 
-    lpred = local_pht[lhist];
-    if(lpred>1)
-        lpred = 0;
+    XOR = hybridbits ^ pcbits;
+    local_hist = 1023 & local_bht[pcbits];
+
+    local_predction = local_pht[local_hist];
+    if(local_predction>1)
+        local_predction = 0;
     else
-        lpred = 1;
+        local_predction = 1;
 
-    gpred = global_pht[index];
-    if(gpred>1)
-        gpred = 0;
+    global_prediction = global_pht[XOR];
+    if(global_prediction>1)
+        global_prediction = 0;
     else
-        gpred = 1;
+        global_prediction = 1;
 
-    if(gpred==outcome && lpred!=outcome && choice_pht[index]!=3)
-        choice_pht[index]++;
-    else if(gpred!=outcome && lpred==outcome && choice_pht[index]!=0)
-        choice_pht[index]--;
+    if(global_prediction == outcome && local_predction != outcome && choice_pht[XOR] != 3)
+        choice_pht[XOR] += 1;
+    else if(global_prediction != outcome && local_predction == outcome && choice_pht[XOR] != 0)
+        choice_pht[XOR] -= 1;
 
     if(outcome==0) {
-        if(global_pht[index]!=3)
-            global_pht[index]++;
-        if(local_pht[lhist]!=3)
-            local_pht[lhist]++;
+        if(global_pht[XOR] !=3)
+            global_pht[XOR] += 1;
+        if(local_pht[local_hist] !=3)
+            local_pht[local_hist] += 1;
     } else {
-        if(global_pht[index]!=0)
-            global_pht[index]--;
-        if(local_pht[lhist]!=0)
-            local_pht[lhist]--;
+        if(global_pht[XOR] != 0)
+            global_pht[XOR] -= 1;
+        if(local_pht[local_hist] != 0)
+            local_pht[local_hist] -= 1;
     }
 
-    local_bht[pcidx] = local_bht[pcidx]<<1 | outcome;
-    gbhr = gbhr<<1 | outcome;
+    local_bht[pcbits] = local_bht[pcbits]<<1 | outcome;
+    global_bhr = global_bhr<<1 | outcome;
 };

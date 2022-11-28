@@ -6,7 +6,7 @@ class my_predictor_t {
         // ====================================================================
 		/// Attributes
 		// ====================================================================
-        uint64_t gbhr = 0;
+        uint64_t global_bhr = 0;
         uint64_t *local_bht;
         uint64_t *local_pht;
         uint64_t *global_pht;
@@ -17,6 +17,6 @@ class my_predictor_t {
 		/// Methods
 		// ====================================================================
         my_predictor_t();
-        void see_the_future(uint64_t pc, uint8_t outcome);
-        void update_predictor(uint64_t pc, uint8_t outcome);
+        void see_the_future(uint64_t PC, uint8_t outcome);
+        void update_predictor(uint64_t PC, uint8_t outcome);
 };
