@@ -25,7 +25,7 @@ void my_predictor_t::see_the_future(uint64_t PC, uint8_t outcome) {
     hybridbits = global_bhr & 511; // get last 5 bits from global bhr
 
     (hybridbits<<9); // shift register to open space
-    hybridbits = hybridbits | (511 & local_bht[pcbits]); // concatenate pc + local bht bits
+    hybridbits = hybridbits | (512 & local_bht[pcbits]); // concatenate pc + local bht bits
 
     XOR = hybridbits ^ pcbits; // XOR-ing register with pc
     choice = choice_pht[XOR];  // getting a choice from the choice pht
@@ -78,7 +78,7 @@ void my_predictor_t::update_predictor(uint64_t PC, uint8_t outcome) {
     hybridbits = global_bhr & 511; // last 5 bits from global bhr
     
     (hybridbits<<9); // opening space for local bht 
-    hybridbits = hybridbits | (511 & local_bht[pcbits]); // concatening global bhr + local pht bits
+    hybridbits = hybridbits | (512 & local_bht[pcbits]); // concatening global bhr + local pht bits
 
     XOR = hybridbits ^ pcbits; // XOR-ing hybrid register and pcbits
     local_hist = 1023 & local_bht[pcbits]; // index for local pht

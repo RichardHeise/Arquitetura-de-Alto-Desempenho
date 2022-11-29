@@ -1,6 +1,6 @@
 Resultados: ASTAR
 End of dynamic simulation trace
-Simulation time: 58.969293
+Simulation time: 61.280465
 End of Simulation
 ######################################################
 trace_reader_t
@@ -9,14 +9,14 @@ hits: 37208459
 misses: 512
 taken: 12427073
 not_taken: 18404363
-predicted: 29618532
-not_predicted: 1212904
-miss_predicted percentage: 96.066015%
+predicted: 24147381
+not_predicted: 6684055
+miss_predicted percentage: 78.320650%
 ######################################################
 processor_t
 Resultados CALCULIX
 End of dynamic simulation trace
-Simulation time: 47.294042
+Simulation time: 47.574549
 End of Simulation
 ######################################################
 trace_reader_t
@@ -25,14 +25,14 @@ hits: 3926596
 misses: 253
 taken: 2490802
 not_taken: 1071161
-predicted: 3509252
-not_predicted: 52711
-miss_predicted percentage: 98.520170%
+predicted: 2805684
+not_predicted: 756279
+miss_predicted percentage: 78.767915%
 ######################################################
 processor_t
 Resultados DEALII
 End of dynamic simulation trace
-Simulation time: 61.436441
+Simulation time: 64.015254
 End of Simulation
 ######################################################
 trace_reader_t
@@ -41,14 +41,14 @@ hits: 31818312
 misses: 5822
 taken: 9441922
 not_taken: 12277743
-predicted: 21355985
-not_predicted: 363680
-miss_predicted percentage: 98.325573%
+predicted: 20506237
+not_predicted: 1213428
+miss_predicted percentage: 94.413229%
 ######################################################
 processor_t
 Resultados GROMACS
 End of dynamic simulation trace
-Simulation time: 56.463695
+Simulation time: 54.778740
 End of Simulation
 ######################################################
 trace_reader_t
@@ -57,14 +57,14 @@ hits: 5077244
 misses: 1148
 taken: 2176816
 not_taken: 2552941
-predicted: 4501523
-not_predicted: 228234
-miss_predicted percentage: 95.174509%
+predicted: 4228701
+not_predicted: 501056
+miss_predicted percentage: 89.406306%
 ######################################################
 processor_t
 Resultados LIBQUANTUM
 End of dynamic simulation trace
-Simulation time: 51.722287
+Simulation time: 50.942806
 End of Simulation
 ######################################################
 trace_reader_t
@@ -73,14 +73,14 @@ hits: 34952067
 misses: 58
 taken: 32596860
 not_taken: 2355137
-predicted: 34693805
-not_predicted: 258192
-miss_predicted percentage: 99.261295%
+predicted: 33368515
+not_predicted: 1583482
+miss_predicted percentage: 95.469552%
 ######################################################
 processor_t
 Resultados NAMD
 End of dynamic simulation trace
-Simulation time: 63.521051
+Simulation time: 69.432755
 End of Simulation
 ######################################################
 trace_reader_t
@@ -89,8 +89,8 @@ hits: 36627388
 misses: 1077
 taken: 12304925
 not_taken: 16778505
-predicted: 28567225
-not_predicted: 516205
-miss_predicted percentage: 98.225089%
+predicted: 27468367
+not_predicted: 1615063
+miss_predicted percentage: 94.446793%
 ######################################################
 processor_t

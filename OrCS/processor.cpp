@@ -33,7 +33,7 @@ void processor_t::clock() {
 	// if we read a branch
 	if (instruction.opcode_operation == INSTRUCTION_OPERATION_BRANCH) {
 		// first lets check the BTB
-		BTBhandler(instruction, next_instruction, false);
+		BTBhandler(instruction, next_instruction, true);
 	}
 };
 
