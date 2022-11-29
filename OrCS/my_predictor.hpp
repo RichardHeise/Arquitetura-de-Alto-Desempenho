@@ -1,3 +1,5 @@
+#define TAKEN 0
+#define NOTAKEN 1
 
 class my_predictor_t {
     private:

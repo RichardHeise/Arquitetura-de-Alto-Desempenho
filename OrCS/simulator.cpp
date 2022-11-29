@@ -1,4 +1,5 @@
 #include "simulator.hpp"
+#include <time.h>
 
 orcs_engine_t orcs_engine;
 
@@ -73,12 +74,17 @@ int main(int argc, char **argv) {
 
     orcs_engine.simulator_alive = true;
 
+    clock_t time;
+    time = clock();
     /// Start CLOCK for all the components
     while (orcs_engine.simulator_alive) {
         orcs_engine.processor->clock();
         orcs_engine.global_cycle++;
     }
+    time = clock() - time;
+    double time_taken = ((double)time)/CLOCKS_PER_SEC;
 
+    printf("Simulation time: %f\n", time_taken);
 	ORCS_PRINTF("End of Simulation\n")
 	orcs_engine.trace_reader->statistics();
     orcs_engine.processor->statistics();

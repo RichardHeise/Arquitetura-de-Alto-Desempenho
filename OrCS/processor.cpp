@@ -24,13 +24,15 @@ void processor_t::clock() {
 
 	instruction = next_instruction;
 
-	/// Get the next instruction from the trace
+	// Get the next instruction from the trace
 	if (!orcs_engine.trace_reader->trace_fetch(&next_instruction)) {
-		/// If EOF
+		// If EOF
 		orcs_engine.simulator_alive = false;
 	}
 
+	// if we read a branch
 	if (instruction.opcode_operation == INSTRUCTION_OPERATION_BRANCH) {
+		// first lets check the BTB
 		BTBhandler(instruction, next_instruction, false);
 	}
 };
@@ -129,19 +131,26 @@ void processor_t::two_bits(opcode_package_t instruction, opcode_package_t next_i
 
 void processor_t::BTBhandler(opcode_package_t instruction, opcode_package_t next_instruction, bool default_pred) {
 
+	// calculate tag
 	int tag = instruction.opcode_address & 1023;
 
+	// for each entry
 	for ( int i = 0; i < 4; i++ ) {
 
+		// hits
 		if ( BTB[tag][i].opcode_address == instruction.opcode_address ) {
 			orcs_engine.hits += 1;
 
 			BTB[tag][i].target_address = next_instruction.opcode_address;
 			BTB[tag][i].access_cycle = orcs_engine.global_cycle;
+
+			// if it's a conditional branch
 			if (instruction.branch_type == BRANCH_COND) {
 				if (default_pred)
+					// default is two_bits
 					two_bits(instruction, next_instruction, tag, i);
 				else 
+					// non-default is my predictor :)
 					other_predictor(instruction, next_instruction);
 			}
 
@@ -174,6 +183,8 @@ void processor_t::BTBhandler(opcode_package_t instruction, opcode_package_t next
 
 void processor_t::other_predictor(opcode_package_t instruction, opcode_package_t next_instruction) {
 
+	// if 0, taken. 
+	// if 1, not taken. 
 	uint8_t outcome = (instruction.opcode_address + instruction.opcode_size == next_instruction.opcode_address);
 	
 	predictor.see_the_future(instruction.opcode_address, outcome);
